@@ -67,39 +67,34 @@ if (btnInstall) {
 }
 
 // ================= DATA STORAGE (LOCALSTORAGE) =================
-const KEY_WARGA = 'akw_warga_v1';
-const KEY_TX = 'akw_tx_v1';
+const KEY_WARGA = 'akw_warga_v2';
+const KEY_TX = 'akw_tx_v2';
 
-// Seed data awal jika masih kosong
-const defaultWarga = [
-  { nama: "IBU DIANA", alamat: "C1/01", hp: "081234567801" },
-  { nama: "BPK DIKI", alamat: "C1/02", hp: "081234567802" },
-  { nama: "TOKO JUS", alamat: "C1/03", hp: "081234567803" },
-  { nama: "BPK LUTFI", alamat: "C1/04", hp: "081234567804" },
-  { nama: "IBU INDAH", alamat: "C1/05", hp: "081234567805" },
-  { nama: "KOPERASI", alamat: "C1/06", hp: "081234567806" },
-  { nama: "BPK TEDI", alamat: "C1/07", hp: "081234567807" },
-  { nama: "BPK AHMAD LANDONG", alamat: "C1/08", hp: "081234567808" },
-  { nama: "BPK TATA", alamat: "C1/18", hp: "081234567809" },
-  { nama: "BPK AJI", alamat: "C1/21", hp: "081234567810" }
-];
-
-const defaultTx = [
-  { id: 1, tanggal: "2026-11-01", jenis: "pemasukan", kategori: "Iuran Bulanan", namaWarga: "BPK DIKI", nominal: 30000, note: "Iuran November" },
-  { id: 2, tanggal: "2026-11-02", jenis: "pemasukan", kategori: "Iuran Bulanan", namaWarga: "IBU DIANA", nominal: 30000, note: "Lunas" },
-  { id: 3, tanggal: "2026-11-04", jenis: "pengeluaran", kategori: "Token Listrik PJU", namaWarga: "", nominal: 50000, note: "PJU Blok C Depan" }
-];
-
-let stateWarga = JSON.parse(localStorage.getItem(KEY_WARGA) || 'null');
-if (!stateWarga) {
-  stateWarga = defaultWarga;
-  localStorage.setItem(KEY_WARGA, JSON.stringify(stateWarga));
+// Bersihkan data dummy versi lama dari localStorage pengguna jika ada
+try {
+  localStorage.removeItem('akw_warga_v1');
+  localStorage.removeItem('akw_tx_v1');
+} catch (e) {
+  console.warn('Gagal membersihkan cache versi lama:', e);
 }
 
-let stateTx = JSON.parse(localStorage.getItem(KEY_TX) || 'null');
-if (!stateTx) {
-  stateTx = defaultTx;
-  localStorage.setItem(KEY_TX, JSON.stringify(stateTx));
+// Inisialisasi data bersih (mulai dari 0 warga dan Rp 0 saldo)
+let stateWarga = [];
+try {
+  const savedWarga = localStorage.getItem(KEY_WARGA);
+  stateWarga = savedWarga ? JSON.parse(savedWarga) : [];
+  if (!Array.isArray(stateWarga)) stateWarga = [];
+} catch (e) {
+  stateWarga = [];
+}
+
+let stateTx = [];
+try {
+  const savedTx = localStorage.getItem(KEY_TX);
+  stateTx = savedTx ? JSON.parse(savedTx) : [];
+  if (!Array.isArray(stateTx)) stateTx = [];
+} catch (e) {
+  stateTx = [];
 }
 
 // ================= NAVIGASI TAB =================
@@ -172,7 +167,7 @@ function renderDashboard() {
 function renderWarga(filter = '') {
   const container = document.getElementById('list-warga-container');
   const badge = document.getElementById('badge-total-warga');
-  badge.textContent = `${stateWarga.length} warga`;
+  if (badge) badge.textContent = `${stateWarga.length} warga`;
 
   const query = filter.toLowerCase().trim();
   const filtered = stateWarga.filter(w => 
@@ -181,21 +176,26 @@ function renderWarga(filter = '') {
   );
 
   if (filtered.length === 0) {
-    container.innerHTML = '<p class="text-xs text-slate-400 text-center py-6">Warga tidak ditemukan.</p>';
+    const pesan = stateWarga.length === 0 
+      ? 'Belum ada data warga terdaftar. Silakan gunakan formulir di atas untuk menambah warga baru.' 
+      : 'Warga tidak ditemukan.';
+    if (container) container.innerHTML = `<p class="text-xs text-slate-400 text-center py-6">${pesan}</p>`;
     return;
   }
 
-  container.innerHTML = filtered.map((w, idx) => `
-    <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
-      <div>
-        <p class="font-bold text-slate-800 text-xs">${w.nama}</p>
-        <p class="text-[11px] text-slate-500">📍 Blok ${w.alamat} ${w.hp ? '· 📞 ' + w.hp : ''}</p>
+  if (container) {
+    container.innerHTML = filtered.map((w, idx) => `
+      <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
+        <div>
+          <p class="font-bold text-slate-800 text-xs">${w.nama}</p>
+          <p class="text-[11px] text-slate-500">📍 Blok ${w.alamat} ${w.hp ? '· 📞 ' + w.hp : ''}</p>
+        </div>
+        <button onclick="hapusWarga(${idx})" class="text-slate-300 hover:text-rose-500 text-sm p-1.5 transition">
+          🗑️
+        </button>
       </div>
-      <button onclick="hapusWarga(${idx})" class="text-slate-300 hover:text-rose-500 text-sm p-1.5 transition">
-        🗑️
-      </button>
-    </div>
-  `).join('');
+    `).join('');
+  }
 }
 
 document.getElementById('cari-warga')?.addEventListener('input', (e) => {
@@ -213,6 +213,7 @@ document.getElementById('form-tambah-warga')?.addEventListener('submit', (e) => 
   e.target.reset();
   renderWarga();
   renderDashboard();
+  populateWargaOptions();
   alert(`Warga ${nama} berhasil ditambahkan!`);
 });
 
@@ -222,6 +223,7 @@ window.hapusWarga = function(idx) {
     localStorage.setItem(KEY_WARGA, JSON.stringify(stateWarga));
     renderWarga();
     renderDashboard();
+    populateWargaOptions();
   }
 };
 
@@ -307,6 +309,21 @@ window.eksporDataJSON = function() {
   a.href = url;
   a.download = `backup_akw_${new Date().toISOString().slice(0, 10)}.json`;
   a.click();
+};
+
+// Fungsi reset manual untuk mengembalikan data ke kondisi 0
+window.resetSemuaData = function() {
+  if (confirm('Apakah Anda yakin ingin mengosongkan seluruh data warga dan transaksi ke kondisi 0?')) {
+    localStorage.removeItem(KEY_WARGA);
+    localStorage.removeItem(KEY_TX);
+    stateWarga = [];
+    stateTx = [];
+    renderDashboard();
+    renderWarga();
+    populateWargaOptions();
+    renderRiwayat();
+    alert('Seluruh data berhasil dibersihkan kembali ke kondisi 0!');
+  }
 };
 
 // ================= INISIALISASI =================
