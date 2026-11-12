@@ -12,7 +12,7 @@ Aplikasi Web & Mobile (PWA / TWA) untuk pengelolaan administrasi dan keuangan wa
 
 ## 🌐 Akses Online
 Aplikasi dapat diakses langsung melalui:
-👉 **[https://syaa002.github.io/AKW-Project/](https://syaa002.github.io/AKW-Project/)**
+👉 **[https://syaa002.github.io/AKW/](https://syaa002.github.io/AKW/)**
 
 ## 🛠️ Pengembangan Lokal
 ```bash

@@ -39,7 +39,7 @@ if (document.readyState === 'loading') {
 // ================= PWA SERVICE WORKER REGISTRATION =================
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/AKW-Project/sw.js').catch(err => console.log('SW Fail', err));
+    navigator.serviceWorker.register('/AKW/sw.js').catch(err => console.log('SW Fail', err));
   });
 }
 

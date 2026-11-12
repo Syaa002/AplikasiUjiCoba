@@ -2,33 +2,33 @@
   "name": "Alat Keuangan Warga",
   "short_name": "AKW",
   "description": "Alat Keuangan Warga (AKW) - Sistem Administrasi & Keuangan Warga",
-  "start_url": "/AKW-Project/",
-  "scope": "/AKW-Project/",
+  "start_url": "/AKW/",
+  "scope": "/AKW/",
   "display": "standalone",
   "background_color": "#1e3a8a",
   "theme_color": "#1d4ed8",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "/AKW-Project/icon-192.png",
+      "src": "/AKW/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/AKW-Project/icon-512.png",
+      "src": "/AKW/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/AKW-Project/icon-192-maskable.png",
+      "src": "/AKW/icon-192-maskable.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "/AKW-Project/icon-512-maskable.png",
+      "src": "/AKW/icon-512-maskable.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
