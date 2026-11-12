@@ -1,7 +1,45 @@
+// ================= SPLASH SCREEN CONTROLLER =================
+function initSplashScreen() {
+  const splash = document.getElementById('splash-screen');
+  const video = document.getElementById('splash-video');
+  if (!splash) return;
+
+  let dismissed = false;
+  const dismissSplash = () => {
+    if (dismissed) return;
+    dismissed = true;
+    splash.classList.add('fade-out');
+    setTimeout(() => {
+      splash.style.display = 'none';
+      if (video) video.pause();
+    }, 650);
+  };
+
+  if (video) {
+    video.addEventListener('ended', dismissSplash);
+    video.addEventListener('error', dismissSplash);
+    const playPromise = video.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(() => {
+        setTimeout(dismissSplash, 1500);
+      });
+    }
+  }
+
+  // Maksimal 2.5 detik agar pengguna langsung dapat mengakses aplikasi
+  setTimeout(dismissSplash, 2500);
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initSplashScreen);
+} else {
+  initSplashScreen();
+}
+
 // ================= PWA SERVICE WORKER REGISTRATION =================
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW Fail', err));
+    navigator.serviceWorker.register('/AplikasiUjiCoba/sw.js').catch(err => console.log('SW Fail', err));
   });
 }
 
@@ -29,8 +67,8 @@ if (btnInstall) {
 }
 
 // ================= DATA STORAGE (LOCALSTORAGE) =================
-const KEY_WARGA = 'rt002_pwa_warga_v1';
-const KEY_TX = 'rt002_pwa_tx_v1';
+const KEY_WARGA = 'akw_warga_v1';
+const KEY_TX = 'akw_tx_v1';
 
 // Seed data awal jika masih kosong
 const defaultWarga = [
@@ -267,7 +305,7 @@ window.eksporDataJSON = function() {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `backup_rt002_${new Date().toISOString().slice(0, 10)}.json`;
+  a.download = `backup_akw_${new Date().toISOString().slice(0, 10)}.json`;
   a.click();
 };
 

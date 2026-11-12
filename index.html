@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>RT 002 De'Keraton</title>
+  <title>Alat Keuangan Warga (AKW)</title>
   
   <!-- PWA Meta -->
-  <link rel="manifest" href="/manifest.json">
+  <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#1d4ed8">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <link rel="icon" type="image/svg+xml" href="/icon.svg">
-  <link rel="apple-touch-icon" href="/icon.svg">
+  <link rel="icon" type="image/png" href="./favicon.png">
+  <link rel="apple-touch-icon" href="./icon-192.png">
 
   <!-- Tailwind CDN (Browser) -->
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
@@ -24,18 +24,31 @@
     input, textarea, select {
       user-select: text;
     }
+    /* Smooth splash screen fade out */
+    #splash-screen.fade-out {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
   </style>
 </head>
 <body class="bg-slate-100 text-slate-800 antialiased min-h-screen pb-24 font-sans">
 
+  <!-- ================= SPLASH SCREEN AWAL ================= -->
+  <div id="splash-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-black">
+    <video id="splash-video" src="./splash.mp4" autoplay muted playsinline class="w-full h-full object-cover">
+      Browser Anda tidak mendukung pemutaran video.
+    </video>
+  </div>
+
   <!-- APP BAR ATAS -->
   <header class="sticky top-0 z-30 bg-blue-700 text-white shadow px-4 py-3 flex items-center justify-between">
-    <div>
-      <div class="flex items-center gap-2">
-        <span class="text-xl">🏠</span>
-        <h1 class="text-base font-extrabold tracking-tight">RT 002 Blok C</h1>
+    <div class="flex items-center gap-2.5">
+      <img src="./logo.jpeg" alt="Logo AKW" class="w-9 h-9 rounded-full object-cover border-2 border-white/50 shadow-sm shrink-0">
+      <div>
+        <h1 class="text-sm font-black tracking-tight leading-none">Alat Keuangan Warga</h1>
+        <p class="text-[10px] text-blue-200 mt-0.5">AKW · De'Keraton</p>
       </div>
-      <p class="text-[11px] text-blue-200">De'Keraton · Live Dev Mode</p>
     </div>
 
     <!-- Tombol Install PWA -->
@@ -48,9 +61,9 @@
   <div class="bg-emerald-600 text-white text-[11px] py-1 px-3 flex items-center justify-between shadow-inner">
     <span class="flex items-center gap-1.5">
       <span class="w-2 h-2 rounded-full bg-emerald-300 animate-ping"></span>
-      <span>Live Sync HP Aktif</span>
+      <span class="font-bold">AKW Online</span>
     </span>
-    <span class="text-emerald-200">Ubah di VS Code -> layar HP otomatis update</span>
+    <span class="text-emerald-100 text-[10px]">Administrasi & Keuangan Terpadu</span>
   </div>
 
   <!-- CONTAINER UTAMA -->
@@ -62,7 +75,7 @@
       <!-- Ringkasan Saldo -->
       <div class="bg-gradient-to-br from-blue-700 to-blue-900 text-white p-5 rounded-2xl shadow-lg relative overflow-hidden">
         <div class="absolute -right-6 -bottom-6 w-28 h-28 bg-white/10 rounded-full blur-xl pointer-events-none"></div>
-        <p class="text-xs text-blue-200 font-medium">Total Saldo Kas RT</p>
+        <p class="text-xs text-blue-200 font-medium">Total Saldo Kas AKW</p>
         <p id="dash-total-saldo" class="text-3xl font-extrabold tracking-tight mt-1">Rp 0</p>
         
         <div class="grid grid-cols-2 gap-2 mt-4 pt-3 border-t border-white/20 text-xs">
@@ -113,7 +126,7 @@
     <!-- ================= TAB: DATA WARGA ================= -->
     <section id="tab-warga" class="tab-page hidden space-y-4">
       <div class="flex items-center justify-between">
-        <h2 class="font-extrabold text-base text-slate-800">👥 Data Warga RT 002</h2>
+        <h2 class="font-extrabold text-base text-slate-800">👥 Data Warga AKW</h2>
         <span id="badge-total-warga" class="text-xs bg-blue-100 text-blue-800 font-bold px-2.5 py-1 rounded-full">0 warga</span>
       </div>
 
@@ -158,7 +171,7 @@
     <!-- ================= TAB: TRANSAKSI ================= -->
     <section id="tab-transaksi" class="tab-page hidden space-y-4">
       <div class="bg-white p-4 rounded-xl shadow border border-slate-200">
-        <h2 class="font-extrabold text-base text-slate-800 mb-4">💳 Catat Kas / Iuran</h2>
+        <h2 class="font-extrabold text-base text-slate-800 mb-4">💳 Catat Kas AKW</h2>
         
         <form id="form-transaksi" class="space-y-3 text-xs">
           <!-- Toggle Jenis -->
@@ -226,7 +239,7 @@
     <!-- ================= TAB: RIWAYAT ================= -->
     <section id="tab-riwayat" class="tab-page hidden space-y-4">
       <div class="flex items-center justify-between">
-        <h2 class="font-extrabold text-base text-slate-800">📜 Riwayat Kas RT</h2>
+        <h2 class="font-extrabold text-base text-slate-800">📜 Riwayat Kas AKW</h2>
         <button onclick="eksporDataJSON()" class="text-xs bg-slate-200 hover:bg-slate-300 font-bold px-3 py-1.5 rounded-lg transition">
           ⬇ Backup
         </button>
@@ -239,7 +252,7 @@
 
   </main>
 
-  <!-- BOTTOM BAR NAVIGASI MOBILE (SEPERTI APLIKASI ASLI) -->
+  <!-- BOTTOM BAR NAVIGASI MOBILE -->
   <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-40 flex justify-around py-2 shadow-lg max-w-md mx-auto">
     <button onclick="pindahTab('dashboard')" id="nav-dashboard" class="flex-1 flex flex-col items-center text-xs font-bold text-blue-600 transition">
       <span class="text-xl">📊</span> Dashboard
