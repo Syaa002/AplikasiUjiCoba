@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>RT 002 De'Keraton</title>
+  
+  <!-- PWA Meta -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#1d4ed8">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="icon" type="image/svg+xml" href="/icon.svg">
+  <link rel="apple-touch-icon" href="/icon.svg">
+
+  <!-- Tailwind CDN (Browser) -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style>
+    /* Styling mobile app look & feel */
+    body {
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    input, textarea, select {
+      user-select: text;
+    }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 antialiased min-h-screen pb-24 font-sans">
+
+  <!-- APP BAR ATAS -->
+  <header class="sticky top-0 z-30 bg-blue-700 text-white shadow px-4 py-3 flex items-center justify-between">
+    <div>
+      <div class="flex items-center gap-2">
+        <span class="text-xl">🏠</span>
+        <h1 class="text-base font-extrabold tracking-tight">RT 002 Blok C</h1>
+      </div>
+      <p class="text-[11px] text-blue-200">De'Keraton · Live Dev Mode</p>
+    </div>
+
+    <!-- Tombol Install PWA -->
+    <button id="btn-install-pwa" class="hidden text-xs bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold px-3 py-1.5 rounded-full shadow transition animate-pulse">
+      📲 Pasang App
+    </button>
+  </header>
+
+  <!-- LIVE INDICATOR BAR -->
+  <div class="bg-emerald-600 text-white text-[11px] py-1 px-3 flex items-center justify-between shadow-inner">
+    <span class="flex items-center gap-1.5">
+      <span class="w-2 h-2 rounded-full bg-emerald-300 animate-ping"></span>
+      <span>Live Sync HP Aktif</span>
+    </span>
+    <span class="text-emerald-200">Ubah di VS Code -> layar HP otomatis update</span>
+  </div>
+
+  <!-- CONTAINER UTAMA -->
+  <main class="max-w-md mx-auto p-4 space-y-4">
+    
+    <!-- ================= TAB: DASHBOARD ================= -->
+    <section id="tab-dashboard" class="tab-page space-y-4">
+      
+      <!-- Ringkasan Saldo -->
+      <div class="bg-gradient-to-br from-blue-700 to-blue-900 text-white p-5 rounded-2xl shadow-lg relative overflow-hidden">
+        <div class="absolute -right-6 -bottom-6 w-28 h-28 bg-white/10 rounded-full blur-xl pointer-events-none"></div>
+        <p class="text-xs text-blue-200 font-medium">Total Saldo Kas RT</p>
+        <p id="dash-total-saldo" class="text-3xl font-extrabold tracking-tight mt-1">Rp 0</p>
+        
+        <div class="grid grid-cols-2 gap-2 mt-4 pt-3 border-t border-white/20 text-xs">
+          <div>
+            <span class="text-blue-200 block text-[10px]">Pemasukan Bulan Ini</span>
+            <strong id="dash-masuk" class="text-emerald-300 text-sm font-bold">+ Rp 0</strong>
+          </div>
+          <div>
+            <span class="text-blue-200 block text-[10px]">Pengeluaran Bulan Ini</span>
+            <strong id="dash-keluar" class="text-rose-300 text-sm font-bold">- Rp 0</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Action Buttons -->
+      <div class="grid grid-cols-2 gap-3">
+        <button onclick="pindahTab('transaksi', 'pemasukan')" class="bg-emerald-600 hover:bg-emerald-700 text-white p-3 rounded-xl shadow flex items-center justify-center gap-2 font-bold text-xs transition active:scale-95">
+          <span>➕</span> Catat Pemasukan
+        </button>
+        <button onclick="pindahTab('transaksi', 'pengeluaran')" class="bg-rose-600 hover:bg-rose-700 text-white p-3 rounded-xl shadow flex items-center justify-center gap-2 font-bold text-xs transition active:scale-95">
+          <span>➖</span> Catat Pengeluaran
+        </button>
+      </div>
+
+      <!-- Kartu Warga Info -->
+      <div class="bg-white p-4 rounded-xl shadow border border-slate-200 flex items-center justify-between">
+        <div>
+          <p class="text-xs text-slate-500 font-bold uppercase">Total Warga Terdata</p>
+          <p id="dash-total-warga" class="text-2xl font-black text-slate-800">0</p>
+        </div>
+        <button onclick="pindahTab('warga')" class="bg-blue-50 text-blue-700 text-xs font-bold px-3 py-2 rounded-lg hover:bg-blue-100 transition">
+          Lihat Semua ➔
+        </button>
+      </div>
+
+      <!-- Riwayat Terakhir -->
+      <div class="bg-white p-4 rounded-xl shadow border border-slate-200">
+        <h3 class="font-bold text-sm text-slate-800 mb-3 flex items-center justify-between">
+          <span>⏱️ 5 Transaksi Terakhir</span>
+          <button onclick="pindahTab('riwayat')" class="text-blue-600 text-xs font-semibold hover:underline">Semua</button>
+        </h3>
+        <div id="dash-recent-list" class="space-y-2 text-xs">
+          <p class="text-slate-400 text-center py-4">Belum ada transaksi</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= TAB: DATA WARGA ================= -->
+    <section id="tab-warga" class="tab-page hidden space-y-4">
+      <div class="flex items-center justify-between">
+        <h2 class="font-extrabold text-base text-slate-800">👥 Data Warga RT 002</h2>
+        <span id="badge-total-warga" class="text-xs bg-blue-100 text-blue-800 font-bold px-2.5 py-1 rounded-full">0 warga</span>
+      </div>
+
+      <!-- Input Pencarian -->
+      <div class="relative">
+        <input type="search" id="cari-warga" placeholder="Cari nama atau blok rumah..." 
+          class="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 pl-10 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm">
+        <span class="absolute left-3.5 top-2.5 text-slate-400 text-sm">🔍</span>
+      </div>
+
+      <!-- Form Tambah Warga Cepat -->
+      <details class="bg-white p-3 rounded-xl shadow border border-slate-200 text-xs group">
+        <summary class="font-bold text-blue-700 cursor-pointer list-none flex items-center justify-between">
+          <span>➕ Tambah Warga Baru</span>
+          <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+        </summary>
+        <form id="form-tambah-warga" class="space-y-3 mt-3 pt-3 border-t">
+          <div>
+            <label class="block font-semibold mb-1 text-slate-600">Nama Lengkap *</label>
+            <input id="w-nama" required class="w-full border rounded-lg p-2 text-xs" placeholder="Contoh: Bpk. Dani">
+          </div>
+          <div>
+            <label class="block font-semibold mb-1 text-slate-600">Alamat / Blok *</label>
+            <input id="w-alamat" required class="w-full border rounded-lg p-2 text-xs" placeholder="Contoh: C2/15">
+          </div>
+          <div>
+            <label class="block font-semibold mb-1 text-slate-600">No. WhatsApp / HP</label>
+            <input id="w-hp" type="tel" class="w-full border rounded-lg p-2 text-xs" placeholder="08xxxxxxxxxx">
+          </div>
+          <button type="submit" class="w-full bg-blue-600 text-white font-bold py-2 rounded-lg text-xs hover:bg-blue-700 transition">
+            Simpan Warga
+          </button>
+        </form>
+      </details>
+
+      <!-- Daftar Warga -->
+      <div id="list-warga-container" class="space-y-2">
+        <!-- Render via JS -->
+      </div>
+    </section>
+
+    <!-- ================= TAB: TRANSAKSI ================= -->
+    <section id="tab-transaksi" class="tab-page hidden space-y-4">
+      <div class="bg-white p-4 rounded-xl shadow border border-slate-200">
+        <h2 class="font-extrabold text-base text-slate-800 mb-4">💳 Catat Kas / Iuran</h2>
+        
+        <form id="form-transaksi" class="space-y-3 text-xs">
+          <!-- Toggle Jenis -->
+          <div>
+            <label class="block font-semibold mb-1 text-slate-600">Jenis Transaksi</label>
+            <div class="grid grid-cols-2 gap-2">
+              <label class="cursor-pointer">
+                <input type="radio" name="tx-tipe" value="pemasukan" checked class="peer sr-only">
+                <div class="p-2.5 rounded-lg border text-center font-bold text-slate-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600 transition">
+                  🟢 Pemasukan
+                </div>
+              </label>
+              <label class="cursor-pointer">
+                <input type="radio" name="tx-tipe" value="pengeluaran" class="peer sr-only">
+                <div class="p-2.5 rounded-lg border text-center font-bold text-slate-600 peer-checked:bg-rose-600 peer-checked:text-white peer-checked:border-rose-600 transition">
+                  🔴 Pengeluaran
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <div>
+            <label class="block font-semibold mb-1 text-slate-600">Tanggal</label>
+            <input type="date" id="tx-date" required class="w-full border rounded-lg p-2 text-xs bg-slate-50">
+          </div>
+
+          <div>
+            <label class="block font-semibold mb-1 text-slate-600">Kategori / Keterangan</label>
+            <select id="tx-kategori" class="w-full border rounded-lg p-2 text-xs bg-white">
+              <option value="Iuran Bulanan">Iuran Bulanan</option>
+              <option value="PAM Lebaran + Buk">PAM Lebaran + Buk</option>
+              <option value="Dana Usaha / Donasi">Dana Usaha / Donasi</option>
+              <option value="BOP RT 02">BOP RT 02</option>
+              <option value="Pembayaran Security">Pembayaran Security</option>
+              <option value="Token Listrik PJU">Token Listrik PJU</option>
+              <option value="Lain-lain">Lain-lain</option>
+            </select>
+          </div>
+
+          <div id="tx-group-warga">
+            <label class="block font-semibold mb-1 text-slate-600">Warga (Opsional untuk iuran)</label>
+            <select id="tx-warga-select" class="w-full border rounded-lg p-2 text-xs bg-white">
+              <option value="">-- Pilih Nama Warga --</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block font-semibold mb-1 text-slate-600">Nominal (Rp) *</label>
+            <input type="number" id="tx-nominal" required placeholder="Contoh: 30000" min="1000" step="1000"
+              class="w-full border rounded-lg p-2.5 text-sm font-bold text-slate-800">
+          </div>
+
+          <div>
+            <label class="block font-semibold mb-1 text-slate-600">Catatan Tambahan</label>
+            <input type="text" id="tx-note" placeholder="Catatan singkat..." class="w-full border rounded-lg p-2 text-xs">
+          </div>
+
+          <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-extrabold py-3 rounded-xl shadow-md transition active:scale-95 text-sm">
+            💾 Simpan Transaksi
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- ================= TAB: RIWAYAT ================= -->
+    <section id="tab-riwayat" class="tab-page hidden space-y-4">
+      <div class="flex items-center justify-between">
+        <h2 class="font-extrabold text-base text-slate-800">📜 Riwayat Kas RT</h2>
+        <button onclick="eksporDataJSON()" class="text-xs bg-slate-200 hover:bg-slate-300 font-bold px-3 py-1.5 rounded-lg transition">
+          ⬇ Backup
+        </button>
+      </div>
+
+      <div id="full-history-list" class="space-y-2">
+        <!-- Render via JS -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- BOTTOM BAR NAVIGASI MOBILE (SEPERTI APLIKASI ASLI) -->
+  <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-40 flex justify-around py-2 shadow-lg max-w-md mx-auto">
+    <button onclick="pindahTab('dashboard')" id="nav-dashboard" class="flex-1 flex flex-col items-center text-xs font-bold text-blue-600 transition">
+      <span class="text-xl">📊</span> Dashboard
+    </button>
+    <button onclick="pindahTab('warga')" id="nav-warga" class="flex-1 flex flex-col items-center text-xs font-bold text-slate-400 transition">
+      <span class="text-xl">👥</span> Warga
+    </button>
+    <button onclick="pindahTab('transaksi')" id="nav-transaksi" class="flex-1 flex flex-col items-center text-xs font-bold text-slate-400 transition">
+      <span class="text-xl">➕</span> Catat
+    </button>
+    <button onclick="pindahTab('riwayat')" id="nav-riwayat" class="flex-1 flex flex-col items-center text-xs font-bold text-slate-400 transition">
+      <span class="text-xl">📑</span> Riwayat
+    </button>
+  </nav>
+
+  <!-- SCRIPT LOGIKA -->
+  <script type="module" src="/main.js"></script>
+</body>
+</html>
