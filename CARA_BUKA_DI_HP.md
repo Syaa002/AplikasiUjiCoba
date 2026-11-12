@@ -1,4 +1,4 @@
-# 📱 Cara Pakai & Live Development di HP
+# 📱 Cara Pakai & Live Development di HP - Alat Keuangan Warga (AKW)
 
 Aplikasi PWA ini dibuat khusus agar kamu bisa langsung coding di Visual Studio Code di laptop, dan hasilnya **langsung terlihat detik itu juga di layar HP kamu tanpa perlu refresh** (Hot Reload).
 
@@ -24,13 +24,11 @@ Buka browser (Google Chrome di Android atau Safari di iPhone), lalu ketik alamat
 - **Di Safari (iPhone):**
   Klik tombol Share (kotak dengan panah ke atas) -> Pilih **"Add to Home Screen"** (*Tambahkan ke Layar Utama*).
 
-Sekarang aplikasimu sudah muncul di homescreen HP dengan icon rumah biru layaknya aplikasi Android/iOS asli!
-
 ---
 
-## ⚡ Langkah 4: Rasakan Keajaiban Live Reload
-1. Buka folder `D:\aplikasi uji coba\app-rt-pwa` di **Visual Studio Code**.
+## ⚡ Langkah 4: Live Coding di Visual Studio Code
+1. Buka folder `D:\AKW-proyek\AKW\AKW-Project` di **Visual Studio Code**.
 2. Buka file `index.html` atau `main.js`.
-3. Coba ubah teks apa saja (misalnya judul `RT 002 Blok C` ganti jadi `RT Keren Kita`).
+3. Coba ubah teks apa saja.
 4. Tekan **`Ctrl + S`** (Save) di Visual Studio Code.
 5. **Lihat layar HP kamu:** Teks di HP langsung berganti secara instan tanpa perlu tekan tombol refresh!

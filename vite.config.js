@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  base: '/AplikasiUjiCoba/',
+  base: '/AKW-Project/',
   build: {
     outDir: 'dist'
   }
