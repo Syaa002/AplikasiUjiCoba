@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  base: '/AKW-Project/',
+  base: '/AKW/',
   build: {
     outDir: 'dist'
   }
