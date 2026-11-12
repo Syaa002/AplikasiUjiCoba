@@ -273,6 +273,33 @@
     </button>
   </nav>
 
+  <!-- TOAST NOTIFICATION CONTAINER (Melayang di atas layar, bertema AKW #0F294A & #059669) -->
+  <div id="toast-container" class="fixed top-4 left-0 right-0 z-[100] pointer-events-none flex flex-col items-center gap-2 px-4 max-w-md mx-auto"></div>
+
+  <!-- MODAL / BOTTOM SHEET KONFIRMASI KUSTOM -->
+  <div id="modal-confirm" class="fixed inset-0 z-[95] hidden items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/60 backdrop-blur-xs transition-opacity duration-200">
+    <!-- Card / Bottom Sheet -->
+    <div id="modal-confirm-card" class="w-full sm:max-w-sm bg-white rounded-t-3xl sm:rounded-2xl p-6 shadow-2xl border border-slate-100 transform transition-all duration-300 translate-y-full sm:translate-y-0 sm:scale-95 opacity-0">
+      <div class="flex items-start gap-4">
+        <div id="modal-confirm-icon-bg" class="w-12 h-12 rounded-2xl flex items-center justify-center text-xl shrink-0 bg-rose-50 text-rose-600 border border-rose-100">
+          <span id="modal-confirm-icon">🗑️</span>
+        </div>
+        <div class="space-y-1">
+          <h3 id="modal-confirm-title" class="font-extrabold text-base text-[#0F294A]">Konfirmasi Tindakan</h3>
+          <p id="modal-confirm-message" class="text-xs text-slate-500 leading-relaxed">Apakah Anda yakin ingin melanjutkan tindakan ini?</p>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-3 mt-6">
+        <button id="modal-confirm-btn-cancel" type="button" class="w-full py-2.5 px-4 rounded-xl border border-slate-200 text-slate-700 font-bold text-xs hover:bg-slate-50 transition active:scale-95">
+          Batal
+        </button>
+        <button id="modal-confirm-btn-ok" type="button" class="w-full py-2.5 px-4 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs shadow-md transition active:scale-95">
+          Ya, Hapus
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- SCRIPT LOGIKA -->
   <script type="module" src="/main.js"></script>
 </body>

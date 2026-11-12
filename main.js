@@ -66,6 +66,162 @@ if (btnInstall) {
   });
 }
 
+// ================= NOTIFIKASI KUSTOM AKW (TOAST & MODAL) =================
+// Tema: Biru Tua #0F294A & Hijau Zamrud #059669
+
+/**
+ * Toast Notification melayang di bagian atas layar (12px rounded, auto-dismiss 2.5s)
+ * @param {string} message - Pesan notifikasi
+ * @param {'success'|'error'|'info'} type - Tipe notifikasi
+ */
+window.showToast = function(message, type = 'success') {
+  const container = document.getElementById('toast-container');
+  if (!container) return;
+
+  const toast = document.createElement('div');
+  toast.className = 'pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-[12px] shadow-2xl text-white text-xs font-semibold max-w-sm w-full transition-all duration-300 transform -translate-y-4 opacity-0 border';
+
+  let iconHtml = '';
+  if (type === 'success') {
+    toast.style.backgroundColor = '#0F294A';
+    toast.style.borderColor = '#059669';
+    iconHtml = `
+      <div class="w-7 h-7 rounded-full flex items-center justify-center shrink-0 text-white shadow font-black text-sm" style="background-color: #059669;">
+        ✓
+      </div>
+    `;
+  } else if (type === 'error') {
+    toast.style.backgroundColor = '#0F294A';
+    toast.style.borderColor = '#E11D48';
+    iconHtml = `
+      <div class="w-7 h-7 rounded-full flex items-center justify-center shrink-0 text-white shadow font-black text-sm bg-rose-600">
+        ✕
+      </div>
+    `;
+  } else {
+    toast.style.backgroundColor = '#0F294A';
+    toast.style.borderColor = '#3B82F6';
+    iconHtml = `
+      <div class="w-7 h-7 rounded-full flex items-center justify-center shrink-0 text-white shadow font-black text-sm bg-blue-600">
+        ℹ
+      </div>
+    `;
+  }
+
+  toast.innerHTML = `
+    ${iconHtml}
+    <div class="flex-1 text-slate-100 leading-snug">${message}</div>
+  `;
+
+  container.appendChild(toast);
+
+  // Animasi masuk (slide down & fade in)
+  requestAnimationFrame(() => {
+    toast.classList.remove('-translate-y-4', 'opacity-0');
+    toast.classList.add('translate-y-0', 'opacity-100');
+  });
+
+  // Otomatis hilang setelah 2.5 detik (2500ms)
+  setTimeout(() => {
+    toast.classList.remove('translate-y-0', 'opacity-100');
+    toast.classList.add('-translate-y-4', 'opacity-0');
+    setTimeout(() => toast.remove(), 300);
+  }, 2500);
+};
+
+// Override window.alert agar selalu menggunakan Toast AKW
+window.alert = function(msg) {
+  window.showToast(msg, 'info');
+};
+
+// Fallback jika window.confirm dipanggil
+window.confirm = function(msg) {
+  window.showToast(msg, 'info');
+  return false;
+};
+
+/**
+ * Custom Bottom Sheet / Modal Konfirmasi modern
+ * @param {Object} options
+ * @returns {Promise<boolean>}
+ */
+let confirmResolver = null;
+
+window.showConfirm = function({
+  title = 'Konfirmasi Tindakan',
+  message = 'Apakah Anda yakin ingin melanjutkan?',
+  icon = '🗑️',
+  confirmText = 'Ya, Hapus',
+  cancelText = 'Batal',
+  danger = true
+} = {}) {
+  return new Promise((resolve) => {
+    const modal = document.getElementById('modal-confirm');
+    const card = document.getElementById('modal-confirm-card');
+    const titleEl = document.getElementById('modal-confirm-title');
+    const msgEl = document.getElementById('modal-confirm-message');
+    const iconEl = document.getElementById('modal-confirm-icon');
+    const iconBg = document.getElementById('modal-confirm-icon-bg');
+    const btnOk = document.getElementById('modal-confirm-btn-ok');
+    const btnCancel = document.getElementById('modal-confirm-btn-cancel');
+
+    if (!modal || !card) {
+      resolve(false);
+      return;
+    }
+
+    titleEl.textContent = title;
+    msgEl.innerHTML = message;
+    iconEl.textContent = icon;
+    btnOk.textContent = confirmText;
+    btnCancel.textContent = cancelText;
+
+    if (danger) {
+      btnOk.className = 'w-full py-2.5 px-4 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs shadow-md transition active:scale-95';
+      btnOk.style.backgroundColor = '';
+      iconBg.className = 'w-12 h-12 rounded-2xl flex items-center justify-center text-xl shrink-0 bg-rose-50 text-rose-600 border border-rose-100';
+    } else {
+      btnOk.className = 'w-full py-2.5 px-4 rounded-xl text-white font-bold text-xs shadow-md transition active:scale-95';
+      btnOk.style.backgroundColor = '#059669';
+      iconBg.className = 'w-12 h-12 rounded-2xl flex items-center justify-center text-xl shrink-0 bg-emerald-50 text-emerald-700 border border-emerald-100';
+    }
+
+    confirmResolver = resolve;
+
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+
+    requestAnimationFrame(() => {
+      card.classList.remove('translate-y-full', 'sm:scale-95', 'opacity-0');
+      card.classList.add('translate-y-0', 'sm:scale-100', 'opacity-100');
+    });
+  });
+};
+
+function closeConfirmModal(result) {
+  const modal = document.getElementById('modal-confirm');
+  const card = document.getElementById('modal-confirm-card');
+  if (!modal || !card) return;
+
+  card.classList.remove('translate-y-0', 'sm:scale-100', 'opacity-100');
+  card.classList.add('translate-y-full', 'sm:scale-95', 'opacity-0');
+
+  setTimeout(() => {
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    if (confirmResolver) {
+      confirmResolver(result);
+      confirmResolver = null;
+    }
+  }, 220);
+}
+
+document.getElementById('modal-confirm-btn-ok')?.addEventListener('click', () => closeConfirmModal(true));
+document.getElementById('modal-confirm-btn-cancel')?.addEventListener('click', () => closeConfirmModal(false));
+document.getElementById('modal-confirm')?.addEventListener('click', (e) => {
+  if (e.target.id === 'modal-confirm') closeConfirmModal(false);
+});
+
 // ================= DATA STORAGE (LOCALSTORAGE) =================
 const KEY_WARGA = 'akw_warga_v2';
 const KEY_TX = 'akw_tx_v2';
@@ -208,22 +364,41 @@ document.getElementById('form-tambah-warga')?.addEventListener('submit', (e) => 
   const alamat = document.getElementById('w-alamat').value.trim();
   const hp = document.getElementById('w-hp').value.trim();
 
+  if (!nama || !alamat) {
+    window.showToast('Nama dan Alamat wajib diisi!', 'error');
+    return;
+  }
+
   stateWarga.unshift({ nama, alamat, hp });
   localStorage.setItem(KEY_WARGA, JSON.stringify(stateWarga));
   e.target.reset();
   renderWarga();
   renderDashboard();
   populateWargaOptions();
-  alert(`Warga ${nama} berhasil ditambahkan!`);
+  window.showToast(`Warga ${nama} berhasil ditambahkan!`, 'success');
 });
 
-window.hapusWarga = function(idx) {
-  if (confirm(`Hapus data ${stateWarga[idx].nama}?`)) {
+window.hapusWarga = async function(idx) {
+  const warga = stateWarga[idx];
+  if (!warga) return;
+
+  const confirmed = await window.showConfirm({
+    title: 'Hapus Data Warga',
+    message: `Apakah Anda yakin ingin menghapus <strong>${warga.nama}</strong> (${warga.alamat}) dari daftar warga? Tindakan ini tidak dapat dibatalkan.`,
+    icon: '🗑️',
+    confirmText: 'Ya, Hapus',
+    cancelText: 'Batal',
+    danger: true
+  });
+
+  if (confirmed) {
+    const namaHapus = warga.nama;
     stateWarga.splice(idx, 1);
     localStorage.setItem(KEY_WARGA, JSON.stringify(stateWarga));
     renderWarga();
     renderDashboard();
     populateWargaOptions();
+    window.showToast(`Data warga ${namaHapus} berhasil dihapus!`, 'info');
   }
 };
 
@@ -249,6 +424,11 @@ document.getElementById('form-transaksi')?.addEventListener('submit', (e) => {
   const nominal = Number(document.getElementById('tx-nominal').value);
   const note = document.getElementById('tx-note').value.trim();
 
+  if (!nominal || nominal <= 0) {
+    window.showToast('Nominal transaksi harus lebih dari Rp 0!', 'error');
+    return;
+  }
+
   const baru = {
     id: Date.now(),
     tanggal,
@@ -262,7 +442,7 @@ document.getElementById('form-transaksi')?.addEventListener('submit', (e) => {
   stateTx.push(baru);
   localStorage.setItem(KEY_TX, JSON.stringify(stateTx));
   e.target.reset();
-  alert('Transaksi berhasil dicatat!');
+  window.showToast('Transaksi berhasil dicatat!', 'success');
   pindahTab('dashboard');
 });
 
@@ -309,11 +489,21 @@ window.eksporDataJSON = function() {
   a.href = url;
   a.download = `backup_akw_${new Date().toISOString().slice(0, 10)}.json`;
   a.click();
+  window.showToast('Data backup AKW berhasil diunduh!', 'success');
 };
 
 // Fungsi reset manual untuk mengembalikan data ke kondisi 0
-window.resetSemuaData = function() {
-  if (confirm('Apakah Anda yakin ingin mengosongkan seluruh data warga dan transaksi ke kondisi 0?')) {
+window.resetSemuaData = async function() {
+  const confirmed = await window.showConfirm({
+    title: 'Reset Seluruh Data',
+    message: 'Apakah Anda yakin ingin mengosongkan <strong>seluruh data warga dan transaksi</strong> ke kondisi 0? Tindakan ini tidak dapat dibatalkan.',
+    icon: '⚠️',
+    confirmText: 'Ya, Reset',
+    cancelText: 'Batal',
+    danger: true
+  });
+
+  if (confirmed) {
     localStorage.removeItem(KEY_WARGA);
     localStorage.removeItem(KEY_TX);
     stateWarga = [];
@@ -322,7 +512,7 @@ window.resetSemuaData = function() {
     renderWarga();
     populateWargaOptions();
     renderRiwayat();
-    alert('Seluruh data berhasil dibersihkan kembali ke kondisi 0!');
+    window.showToast('Seluruh data berhasil dibersihkan kembali ke kondisi 0!', 'success');
   }
 };
 
