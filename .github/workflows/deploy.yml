@@ -35,6 +35,12 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Ensure dotfiles exist in dist
+        run: |
+          touch dist/.nojekyll
+          mkdir -p dist/.well-known
+          cp public/.well-known/assetlinks.json dist/.well-known/assetlinks.json
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
