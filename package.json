@@ -1,6 +1,7 @@
 {
-  "name": "app-rt-pwa",
+  "name": "alat-keuangan-warga",
   "version": "1.0.0",
+  "description": "Alat Keuangan Warga (AKW) - Sistem Administrasi & Keuangan",
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0 --port 5173",
@@ -8,7 +9,7 @@
     "preview": "vite preview"
   },
   "devDependencies": {
-    "sharp": "^0.35.5",
+    "sharp": "^0.33.5",
     "vite": "^6.0.0"
   }
 }
