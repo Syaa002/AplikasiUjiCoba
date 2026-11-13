@@ -24,22 +24,9 @@
     input, textarea, select {
       user-select: text;
     }
-    /* Smooth splash screen fade out */
-    #splash-screen.fade-out {
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-    }
   </style>
 </head>
 <body class="bg-slate-100 text-slate-800 antialiased min-h-screen pb-24 font-sans">
-
-  <!-- ================= SPLASH SCREEN AWAL ================= -->
-  <div id="splash-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-black">
-    <video id="splash-video" src="./splash.mp4" autoplay muted playsinline class="w-full h-full object-cover">
-      Browser Anda tidak mendukung pemutaran video.
-    </video>
-  </div>
 
   <!-- APP BAR ATAS -->
   <header class="sticky top-0 z-30 bg-blue-700 text-white shadow px-4 py-3 flex items-center justify-between">

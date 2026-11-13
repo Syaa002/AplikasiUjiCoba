@@ -1,15 +1,20 @@
-const CACHE_NAME = 'rt002-cache-v1';
+const CACHE_NAME = 'akw-cache-v3';
 
 self.addEventListener('install', (e) => {
   self.skipWaiting();
 });
 
 self.addEventListener('activate', (e) => {
-  e.waitUntil(clients.claim());
+  e.waitUntil(
+    caches.keys().then((keys) => {
+      return Promise.all(
+        keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
+      );
+    }).then(() => self.clients.claim())
+  );
 });
 
 self.addEventListener('fetch', (e) => {
-  // Vite handles live reload requests directly
   e.respondWith(
     fetch(e.request).catch(() => caches.match(e.request))
   );
